@@ -11,12 +11,14 @@ from sklearn.metrics import log_loss
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split as TTS, RandomizedSearchCV as RSC
 
+##Read data
 wc = pd.read_excel('fRefinedz.xlsx')
 rst = pd.read_excel('wc_datathon_eg.xlsx')
 
 train = wc.loc[(wc['match_id'] == 0)].drop(columns = ['match_id'])
 test = wc.loc[~(wc['match_id'] == 0)]
 
+##Dataframe Concatenation
 test_ID = test['match_id']
 test_t1 = test['team_1']
 test_t2 = test['team_2']
@@ -24,12 +26,15 @@ c_date = rst['date']
 train1 = train.shape[0]
 df = pd.concat([train, test], axis = 0).reset_index().drop(columns = ['index', 'match_id'])
 
+## Data Manipulation
 num = df.select_dtypes(include=['int64', 'float64'])
 cat = df.select_dtypes(include=['object']).drop(columns = ['t1Outcomes']).apply(LabelEncoder().fit_transform)
 df['t1Outcomes'].replace('Win', 2, inplace = True)
 df['t1Outcomes'].replace('Draw', 1, inplace = True)
 df['t1Outcomes'].replace('Lose', 0, inplace = True)
 
+
+## Dataframe Concatenation II
 df = pd.concat([cat, num, df['t1Outcomes']], axis = 1).drop(columns=['t1_goals', 't2_goals'])
 train = df[:train1]
 test = df[train1:]
